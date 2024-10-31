@@ -14,9 +14,14 @@ class HomeController
 
     public function chat()
     {
-        Helpers::view("home/chat");
+        Helpers::view("home/chat",["ah"]);
     }
-   
+   public function register(){
+    Helpers::view("home/register");
+   }
+    public function login(){
+        Helpers::view("home/login");
+    }
     public function logout()
     {
         $userController = new UserController();

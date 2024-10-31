@@ -17,3 +17,5 @@ if (App::globalMaintenanceMode) {
 
 $router->addRoute(['/', "/anasayfa"], [$homeController, 'index'], null, false, false);
 $router->addRoute(["/chat"], [$homeController, 'chat'], null, false, false);
+$router->addRoute(["/login"],[$homeController,"login"]);
+$router->addRoute(["/register"], [$homeController,"register"]);
