@@ -15,9 +15,7 @@ class App
     public const template = "hackathon";
     public const globalMaintenanceMode = false;
 
-
     
-
     public const DB_HOST = "localhost";
     // public const DB_HOST = "87.248.157.245";
     public const DB_USER = 'root';
