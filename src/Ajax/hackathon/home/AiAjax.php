@@ -5,7 +5,7 @@ require_once AUTOLOAD_PATH;
 use App\Operation\AIOperation;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $requestData = $_POST;
+    $requestData = $_POST["message"];
     $userModel = new AIOperation();
     $response = $userModel->chatBot($requestData);
     header('Content-Type: application/json');

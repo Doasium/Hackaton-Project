@@ -4,13 +4,20 @@ require_once AUTOLOAD_PATH;
 
 use App\Operation\AIOperation;
 
+
+// Mesajın geldiği yer (örneğin bir AJAX isteği)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $requestData = $_POST;
-    $userModel = new AIOperation();
-    $response = $userModel->chatBot($requestData);
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit; // PHP işlemi burada sona erdir
+    $message = $_POST['message'] ?? ''; // Mesajı POST'tan alıyoruz
+
+    // Mesajın boş olmadığından emin olalım
+    if (!empty($message) && is_string($message)) {
+        $aiOperation = new AIOperation();
+        $response = $aiOperation->chatBot($message); // Mesajı chatBot metoduna gönderiyoruz
+        
+        echo json_encode(['response' => $response]); // Yanıtı JSON olarak döndürüyoruz
+    } else {
+        echo json_encode(['error' => 'Message must be a non-empty string']);
+    }
 }
 ?>
 
@@ -23,40 +30,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Sohbet Alanı</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=account_circle" />
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
     <style>
+        /* Stil ayarları */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        * {
+            font-family: "Poppins", sans-serif;
+            font-weight: 500;
+            font-style: normal;
+        }
+
         body {
-            background: rgb(48,84,124);
-            background: linear-gradient(90deg, rgba(48,84,124,1) 0%, rgba(30,62,98,1) 35%, rgba(50,103,162,1) 100%);
+            background: #f6f6f6;
             color: white;
             font-family: "Montserrat Alternates", sans-serif;
         }
 
+        .navbar,
+        .sidebar {
+            background-color: #e5efff;
+        }
+
         .navbar {
-            background-color: black;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
         }
 
-        .navbar .nav-link,
-        .navbar-brand {
-            color: white !important;
+        .sidebar {
+            padding: 20px;
+            border-radius: 10px;
         }
 
-        .navbar .form-control {
-            background-color: #2a2a2a;
-            color: white;
-            border: none;
-        }
-
-        .navbar .btn-outline-light {
-            border-color: #555;
-            color: #ccc;
+        .cato:hover,
+        .nav-link:hover {
+            color: #00dbde;
         }
 
         .chat-container {
-            background-color: black;
+            background-color: #2a2a2a;
             padding: 20px;
             border-radius: 5px;
             height: 400px;
@@ -64,113 +79,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 20px;
         }
 
-        .chat-input {
+        .loading-animation {
             display: flex;
-            margin-top: 10px;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, #0000007d, #0c044d66);
+            color: #ffca28;
+            font-size: 14px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
         }
 
-        .chat-message {
-            margin: 5px 0;
+        .spinner {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid #ffca28;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        .user {
-            color: #0078ff;
-            /* Kullanıcı mesaj rengi */
-        }
-
-        .ai {
-            color: #00dbde;
-            /* Yapay zeka mesaj rengi */
-        }
-
-        .sidebar {
-            background-color: black;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .container {
-            max-width: 1120px;
-            padding: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                margin-bottom: 20px;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
         }
-        .cato{
-          text-decoration: none;
-          list-style: none;
-          color: white;
-        }
-        .cato:hover{
-          color: white;
-          text-decoration: none;
-        }
-        ul li a{
-            border-radius: 20px;
-        }
-        ul li a:hover{
-            background: #0078ff;
-            background: linear-gradient(45deg, #00dbde, #7AB2D3);
-        }
-        .btn{
-            background: #0078ff;
-            background: linear-gradient(45deg, #00dbde, #7AB2D3);
+
+        .bg-header {
+            background: linear-gradient(45deg, #0000007d, #0c044d66), url("https://images.pexels.com/photos/1229042/pexels-photo-1229042.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            color: #ccc;
         }
     </style>
 </head>
 
 <body>
-
-<header class="header mb-5" id="header">
+    <div class="loading-animation" id="loading-animation" style="display: none;">
+        <div class="spinner"></div> Yanıt Bekleniyor...
+    </div>
+    <header class="header mb-5">
         <nav class="navbar navbar-expand-lg container">
             <a class="navbar-brand" href="/">Shark Edu</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                        <a class="nav-link" href="/" >Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="chat" style="background: #0078ff;
-            background: linear-gradient(45deg, #00dbde, #7AB2D3);">ChatBot</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="login">
-                        <span class="material-symbols-outlined">
-                            account_circle
-                            </span>
-                          
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="chat">ChatBot</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login"><span class="material-icons-outlined">account_circle</span></a></li>
                 </ul>
             </div>
         </nav>
     </header>
+
+    <div class="container bg-header rounded">
+        <div class="header_card text-white p-5 text-center h-100">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo suscipit delectus esse in. Eveniet adipisci atque aperiam laboriosam architecto unde quaerat facere, libero temporibus corporis voluptate quod? Error, eius quod.
+        </div>
+    </div>
+
+
     <div class="container mt-5">
         <div class="row">
-        <div class="col-md-3 sidebar">
-                <h5 class="filter-title text-center" style=" background: #0078ff; border-radius: 20px; background: linear-gradient(45deg, #00dbde, #7AB2D3);">Kategoriler</h5>
-                <div class="Kategoriler">
-                    <a href="#" class="cato"> - Yazılım Dünyası</a>
-                </div>
+            <div class="col-md-3 sidebar">
+                <h5 class="filter-title text-center" style="background: linear-gradient(45deg, #00dbde, #7AB2D3);">Kategoriler</h5>
+                <a href="#" class="cato">- Yazılım Dünyası</a>
                 <!-- Diğer kategoriler -->
             </div>
-
             <div class="col-md-9">
                 <div class="chat-container" id="chat-container">
                     <div id="chat-messages"></div>
                 </div>
-                <div class="chat-input">
-                    <input type="text" id="chat-input" class="form-control" placeholder="Mesaj yazın...">
-                    <button id="send-button" class="btn">Gönder</button>
+                <div class="chat-input d-flex">
+                    <input type="text" id="chat-input" name="message" class="form-control" placeholder="Mesaj yazın...">
+                    <button id="send-button" class="btn btn-primary">Gönder</button>
                 </div>
             </div>
         </div>
@@ -179,67 +169,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#send-button').click(function() {
-                const message = $('#chat-input').val();
-                if (message.trim() !== '') {
-                    // Kullanıcı mesajını ekle
-                    $('#chat-messages').append(`<div class="chat-message user"><strong>Sen:</strong> ${message}</div>`);
-                    $('#chat-input').val(''); // Giriş alanını temizle
-                    $('.chat-container').scrollTop($('.chat-container')[0].scrollHeight); // Aşağı kaydır
+        hljs.highlightAll();
 
-                    // Yapay zeka yanıtını al
-                    getAIResponse(message);
-                }
-            });
-
-            $('#chat-input').keypress(function(e) {
-                if (e.which == 13) { // Enter tuşuna basıldığında
-                    $('#send-button').click();
-                }
+        $(document).ready(() => {
+            $('#send-button').on('click', sendMessage);
+            $('#chat-input').on('keypress', (e) => {
+                if (e.which === 13) sendMessage();
             });
         });
 
-        function getAIResponse(userMessage) {
-            $.ajax({
-                url: 'src/Ajax/hackathon/home/AiAjax.php', // AJAX isteği için URL
-                type: 'POST',
-                data: {
-                    message: userMessage
-                },
-                success: function(response) {
-                    // Eğer yanıt bir nesne ise, metni al
-                    const aiMessage = typeof response === 'object' ? response.message : response;
-                    typeOutResponse("Cafer", aiMessage); // Yapay zeka yanıtını yazdır
-                },
-                error: function(error) {
-                    console.error("Hata:", error);
-                }
-            });
+        function sendMessage() {
+            const message = $('#chat-input').val().trim();
+            if (!message) return;
+            displayMessage("Sen", message, 'user');
+            $('#chat-input').val('');
+            getAIResponse(message);
         }
 
-        function typeOutResponse(name, response) {
-            let index = 0;
-            const typingSpeed = 10; // Harfler arası gecikmeyi azalt (ms)
-            // Yeni bir mesaj alanı oluştur
-            const aiMessageContainer = $(`<div class="chat-message ai"><strong>${name}:</strong> <span id="ai-response-${Date.now()}"></span></div>`);
-            $('#chat-messages').append(aiMessageContainer); // Mesaj alanını ekle
-            const aiResponseContainer = aiMessageContainer.find('span'); // Yeni mesaj alanındaki span'ı bul
+        function getAIResponse(userMessage) {
+            $('#loading-animation').show();
+            $.post('src/Ajax/hackathon/home/AiAjax.php', {
+                    message: userMessage
+                })
+                .done((data) => {
+                    const aiMessage = (typeof data === 'object' && data.message) ? data.message : data;
+                    displayMessage("Cafer", aiMessage, 'ai');
+                })
+                .fail((error) => console.error("Hata:", error))
+                .always(() => $('#loading-animation').hide());
+        }
 
-            const type = () => {
-                if (index < response.length) {
-                    aiResponseContainer.append(response[index]);
-                    index++;
-                    setTimeout(type, typingSpeed);
-                } else {
-                    $('.chat-container').scrollTop($('.chat-container')[0].scrollHeight); // Aşağı kaydır
-                }
-            };
+        function displayMessage(sender, message, messageType) {
+            $('#chat-messages').append(`<div class="chat-message ${messageType}"><strong>${sender}:</strong> ${convertMarkdown(message)}</div>`);
+            $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
+            hljs.highlightAll();
+        }
 
-            type();
+        function convertMarkdown(text) {
+            return text
+                .replace(/###### (.*?)\n/g, '<h6>$1</h6>')
+                .replace(/##### (.*?)\n/g, '<h5>$1</h5>')
+                .replace(/#### (.*?)\n/g, '<h4>$1</h4>')
+                .replace(/### (.*?)\n/g, '<h3>$1</h3>')
+                .replace(/## (.*?)\n/g, '<h2>$1</h2>')
+                .replace(/# (.*?)\n/g, '<h1>$1</h1>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>');
         }
     </script>
-
 </body>
 
 </html>

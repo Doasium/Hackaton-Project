@@ -12,22 +12,43 @@ class AIOperation
 {
     public function chatBot($message)
     {
-        $history = [
-            Content::text(text: 'Benim adım Arda ve 19 yaşındayım', Role::User),
-        ];
+        $cache = new Cache("ai_");
+        $cache_key = "chat"; // Anahtar ismi düzeltildi
+        // Geçmişi almak için cache kontrolü
+        if ($cache->has($cache_key)) {
+            $history = $cache->get($cache_key);
+        } else {
+            // Eğer geçmiş yoksa, başlangıç mesajını ekle
+            $history = [
+                Content::text('Benim adım Arda ve 19 yaşındayım', Role::User),
+            ];
+        }
 
+        // Gelen mesajın bir string olduğundan emin olalım
+        if (!empty($message) && is_string($message)) {
+            // Mesajı geçmişe ekliyoruz
+            $history[] = Content::text($message, Role::User);
+        }
+
+        // API client'i tanımlıyoruz
         $client = new Client('AIzaSyDnOmMDXtyu4QjHjgCIma5SExLomyklrfE');
-        $chat = $client->geminiPro()->startChat()->withHistory($history);
+        $chat = $client->geminiPro15()->startChat()->withHistory($history);
+
+        // Mesaj gönderiyoruz ve yanıtı alıyoruz
         $result = $this->sendMessage($message, $history, $chat);
+
+        // Geçmişi cache'e kaydediyoruz
+        $cache->set($cache_key, $history);
+
         return $result;
     }
 
     public function sendMessage($message, $history, $chat)
     {
-        $history[] = Content::text($message["message"], role: Role::User);
+        // Mesajı gönderiyoruz
+        $response = $chat->withHistory($history)->sendMessage(new TextPart($message));
 
-        $response = $chat->withHistory($history)->sendMessage(new TextPart($message["message"]));
-
+        // Yanıtı geçmişe ekliyoruz
         $history[] = Content::text($response->text(), Role::Model);
 
         return $response->text();

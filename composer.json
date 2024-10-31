@@ -7,6 +7,14 @@
         }
     },
     "require": {
-        "ramsey/uuid": "^4.7"
+        "ramsey/uuid": "^4.7",
+        "google-gemini-php/client": "^1.0",
+        "guzzlehttp/guzzle": "^7.9",
+        "gemini-api-php/client": "^1.4"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
