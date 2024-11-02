@@ -23,28 +23,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Sohbet Alanı</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=account_circle" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
     <style>
+                @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        * {
+            font-family: "Poppins", sans-serif;
+            font-weight: 500;
+            font-style: normal;
+        }
+       
         body {
-            background: rgb(48,84,124);
-            background: linear-gradient(90deg, rgba(48,84,124,1) 0%, rgba(30,62,98,1) 35%, rgba(50,103,162,1) 100%);
+            background: #f6f6f6;
             color: white;
             font-family: "Montserrat Alternates", sans-serif;
         }
 
         .navbar {
-            background-color: black;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-        }
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
 
-        .navbar .nav-link,
-        .navbar-brand {
-            color: white !important;
+        }
+        .navbar,
+        .sidebar {
+            background-color: #e5efff;
+        }
+        .cato:hover,
+        .nav-link:hover {
+            color: #00dbde;
         }
 
         .chat-container {
-            background-color: black;
+            background-color: #e5efff;
             padding: 20px;
             border-radius: 5px;
             overflow-y: auto;
@@ -60,14 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         .sidebar {
-            background-color: black;
             padding: 20px;
             border-radius: 10px;
-        }
-
-        .container {
-            max-width: 1120px;
-            padding: 20px;
         }
 
         @media (max-width: 768px) {
@@ -75,26 +82,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 margin-bottom: 20px;
             }
         }
-        .cato{
-          text-decoration: none;
-          list-style: none;
-          color: white;
+        .cato:hover,
+        .nav-link:hover {
+            color: #00dbde;
         }
-        .cato:hover{
-          color: white;
-          text-decoration: none;
+        
+        .bg-header {
+            background: linear-gradient(45deg, #0000007d, #0c044d66), url("https://images.pexels.com/photos/1229042/pexels-photo-1229042.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            color: #ccc;
         }
-        ul li a{
-            border-radius: 20px;
-        }
-        ul li a:hover{
-            background: #0078ff;
-            background: linear-gradient(45deg, #00dbde, #7AB2D3);
-        }
-        .card{
-            background: #0078ff;
-            background: linear-gradient(45deg, #00dbde, #7AB2D3);
-            color: white;
+        .cato:hover,
+        .nav-link:hover {
+            color: #00dbde;
         }
         .btn{
             width: 100%;
@@ -106,37 +108,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
 
-    <header class="header mb-5" id="header">
+<header class="header mb-5">
         <nav class="navbar navbar-expand-lg container">
             <a class="navbar-brand" href="/">Shark Edu</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                        <a class="nav-link" href="/" style="background: #0078ff;
-            background: linear-gradient(45deg, #00dbde, #7AB2D3);">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="chat">ChatBot</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="login">
-                        <span class="material-symbols-outlined">
-                            account_circle
-                            </span>
-                          
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="chat">ChatBot</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login"><span class="material-icons-outlined">account_circle</span></a></li>
                 </ul>
             </div>
         </nav>
     </header>
-
     <div class="container mt-5">
         <div class="row">
         <div class="col-md-3 sidebar">
@@ -161,24 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                               </div>
                             </div>
                             </div>
-                            <div class="col-lg-5 m-3">
-                            <div class="card" style="width: 18rem;">
-                              <img class="card-img-top" src="..." alt="Card image cap">
-                              <div class="card-body">
-                                <h5 class="card-title">Başlık</h5>
-                                <p class="card-text">Açıklama</p>
-                                <a href="#" class="btn">Katıl</a>
-                              </div>
-                            </div>
-                            </div>
-                            <div class="col-lg-5 m-3">
-                            <div class="card" style="width: 18rem;">
-                              <img class="card-img-top" src="..." alt="Card image cap">
-                              <div class="card-body">
-                                <h5 class="card-title">Başlık</h5>
-                                <p class="card-text">Açıklama</p>
-                                <a href="#" class="btn">Katıl</a>
-                              </div>
                             </div>
                             </div>
                         </div>
