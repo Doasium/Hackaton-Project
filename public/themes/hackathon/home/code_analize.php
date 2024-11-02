@@ -32,89 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
-    <style>
-        /* Stil ayarları */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
-        * {
-            font-family: "Poppins", sans-serif;
-            font-weight: 500;
-            font-style: normal;
-        }
-
-        body {
-            background: #f6f6f6;
-            font-family: "Montserrat Alternates", sans-serif;
-        }
-
-        .navbar,
-        .sidebar {
-            background-color: #e5efff;
-        }
-
-        .navbar {
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 10px;
-        }
-
-        .sidebar {
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .cato:hover,
-        .nav-link:hover {
-            color: #00dbde;
-        }
-
-        .chat-container {
-            background-color: #2a2a2a;
-            padding: 20px;
-            border-radius: 5px;
-            height: 400px;
-            overflow-y: auto;
-            margin-bottom: 20px;
-        }
-
-        .loading-animation {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(45deg, #0000007d, #0c044d66);
-            color: #ffca28;
-            font-size: 14px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 100000000000;
-        }
-
-        .spinner {
-            width: 1.5rem;
-            height: 1.5rem;
-            border: 2px solid #ffca28;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .bg-header {
-            background: linear-gradient(45deg, #0000007d, #0c044d66), url("https://images.pexels.com/photos/1229042/pexels-photo-1229042.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: cover;
-            color: #ccc;
-        }
-    </style>
+    <link rel="stylesheet" href="/public/themes/hackathon/home/assets/css/styles.css">
     <link rel="stylesheet" href="/public/themes/hackathon/home/assets/css/upload.css">
 </head>
 
@@ -122,22 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="loading-animation" id="loading-animation" style="display: none;">
         <div class="spinner"></div> Yanıt Bekleniyor...
     </div>
-    <header class="header mb-5">
-        <nav class="navbar navbar-expand-lg container">
-            <a class="navbar-brand" href="/">Shark Edu</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/chat">ChatBot</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="login"><span class="material-icons-outlined">account_circle</span></a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+    
+    <?php include 'templates/navbar.php'; ?>
 
     <div class="container bg-header rounded">
         <div class="header_card text-white p-5 text-center h-100">
@@ -164,8 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div id="uploadArea" class="upload-area">
                         <!-- Header -->
                         <div class="upload-area__header">
-                            <h1 class="upload-area__title">Upload your file</h1>
-                        
+                            <h1 class="upload-area__title">Dosyayı Yükleyiniz</h1>
+
                         </div>
                         <!-- End Header -->
 
@@ -206,9 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div id="resultContainer" class="upload-area" style="animation: slidDown 500ms ease;">
                         <div id="goalAi">
-                            <h4 class="text-danger">AI:</h4> <div class="result"></div>
+                            <h4 class="text-danger">AI:</h4>
+                            <div class="result"></div>
                         </div>
-                       
+
                     </div>
                 </div>
 

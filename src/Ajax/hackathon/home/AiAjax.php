@@ -1,7 +1,7 @@
 <?php
 require_once $_SERVER["DOCUMENT_ROOT"] . '/src/Config/config.php';
 require_once AUTOLOAD_PATH;
-
+session_start();
 use App\Operation\AIOperation;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
