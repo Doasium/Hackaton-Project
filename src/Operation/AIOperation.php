@@ -13,31 +13,25 @@ class AIOperation
     public function chatBot($message)
     {
         $cache = new Cache("ai_");
-        $cache_key = "chat"; // Anahtar ismi düzeltildi
-        // Geçmişi almak için cache kontrolü
+        $cache_key = "chat";
+
         if ($cache->has($cache_key)) {
             $history = $cache->get($cache_key);
         } else {
-            // Eğer geçmiş yoksa, başlangıç mesajını ekle
             $history = [
                 Content::text('Benim adım Arda ve 19 yaşındayım', Role::User),
             ];
         }
 
-        // Gelen mesajın bir string olduğundan emin olalım
         if (!empty($message) && is_string($message)) {
-            // Mesajı geçmişe ekliyoruz
             $history[] = Content::text($message, Role::User);
         }
 
-        // API client'i tanımlıyoruz
         $client = new Client('AIzaSyDnOmMDXtyu4QjHjgCIma5SExLomyklrfE');
         $chat = $client->geminiPro15()->startChat()->withHistory($history);
 
-        // Mesaj gönderiyoruz ve yanıtı alıyoruz
         $result = $this->sendMessage($message, $history, $chat);
 
-        // Geçmişi cache'e kaydediyoruz
         $cache->set($cache_key, $history);
 
         return $result;
@@ -45,13 +39,28 @@ class AIOperation
 
     public function sendMessage($message, $history, $chat)
     {
-        // Mesajı gönderiyoruz
         $response = $chat->withHistory($history)->sendMessage(new TextPart($message));
 
-        // Yanıtı geçmişe ekliyoruz
         $history[] = Content::text($response->text(), Role::Model);
 
         return $response->text();
+    }
+
+    public function codeAnaliz($code)
+    {
+        $client = new Client('AIzaSyDJwdS9G-dlzrtASyDnZpxRAAQXnlTM4Nc');
+        $chat = $client->geminiPro15()->startChat();
+
+        $goal = "Sadece ekrana 1 kere ahmet yazdırması gerekli.";
+        $response = $chat->sendMessage(
+            new TextPart("Aşağıdaki PHP kodunu analiz et ve başarı oranını % olarak belirt: \n\n" . $code . "\n kodun amacı şu:" . $goal . "\n çok kısa bir şekilde geri dönütler sağla sadece başarı oranı ve şunu yapsaydın daha iyi olabilirdi gibi. ve asla kod örneği verme. eğer ki çok düşük bir yüzdelik başarısı varsa yorum yapma sadece yüzdeliğini söyle. Eğer " . $code . " bu kod istenileni karşılamıyorsa yalnızca %lik olarak başarısını ver istenilen ise şu: " . $goal)
+        );
+
+        $analysisResult = $response->text();
+
+        return [
+            'analysis' => $analysisResult,
+        ];
     }
 
     public function history() {}

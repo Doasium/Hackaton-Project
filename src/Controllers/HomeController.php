@@ -14,13 +14,20 @@ class HomeController
 
     public function chat()
     {
-        Helpers::view("home/chat",["ah"]);
+        Helpers::view("home/chat", ["ah"]);
     }
-   public function register(){
-    Helpers::view("home/register");
-   }
-    public function login(){
+    public function register()
+    {
+        Helpers::view("home/register");
+    }
+    public function login()
+    {
         Helpers::view("home/login");
+    }
+
+    public function code_analize()
+    {
+        Helpers::view("home/code_analize");
     }
     public function logout()
     {

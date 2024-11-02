@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($message) && is_string($message)) {
         $aiOperation = new AIOperation();
         $response = $aiOperation->chatBot($message); // Mesajı chatBot metoduna gönderiyoruz
-        
+
         echo json_encode(['response' => $response]); // Yanıtı JSON olarak döndürüyoruz
     } else {
         echo json_encode(['error' => 'Message must be a non-empty string']);
@@ -44,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         body {
             background: #f6f6f6;
-            color: white;
             font-family: "Montserrat Alternates", sans-serif;
         }
 
@@ -90,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             left: 0;
             right: 0;
             bottom: 0;
-            z-index: 1000;
+            z-index: 100000000000;
         }
 
         .spinner {
@@ -116,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #ccc;
         }
     </style>
+    <link rel="stylesheet" href="/public/themes/hackathon/home/assets/css/upload.css">
 </head>
 
 <body>
@@ -128,10 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav ml-auto align-items-center">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="chat">ChatBot</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/chat">ChatBot</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
                     <li class="nav-item"><a class="nav-link" href="login"><span class="material-icons-outlined">account_circle</span></a></li>
                 </ul>
@@ -147,76 +147,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     <div class="container mt-5">
+
         <div class="row">
             <div class="col-md-3 sidebar">
                 <h5 class="filter-title text-center" style="background: linear-gradient(45deg, #00dbde, #7AB2D3);">Kategoriler</h5>
                 <a href="#" class="cato">- Yazılım Dünyası</a>
                 <!-- Diğer kategoriler -->
             </div>
-            <div class="col-md-9">
-                <div class="chat-container" id="chat-container">
-                    <div id="chat-messages"></div>
+
+            <div class="col-md-9 ">
+                <div class="quest">
+                    <h4 id="quest_title">Soru #1</h4>
+                    <p id="quest_details">Döngüyle 100 kere ahmet yazdırması gerekli.</p>
                 </div>
-                <div class="chat-input d-flex">
-                    <input type="text" id="chat-input" name="message" class="form-control" placeholder="Mesaj yazın...">
-                    <button id="send-button" class="btn btn-primary">Gönder</button>
+                <div class="context d-flex">
+                    <div id="uploadArea" class="upload-area">
+                        <!-- Header -->
+                        <div class="upload-area__header">
+                            <h1 class="upload-area__title">Upload your file</h1>
+                        
+                        </div>
+                        <!-- End Header -->
+
+                        <!-- Drop Zoon -->
+                        <div id="dropZoon" class="upload-area__drop-zoon drop-zoon">
+                            <span class="drop-zoon__icon">
+                                <i class='bx bxs-file-image'></i>
+                            </span>
+                            <p class="drop-zoon__paragraph">Drop your file here or Click to browse</p>
+                            <span id="loadingText" class="drop-zoon__loading-text">Please Wait</span>
+                            <img src="" alt="Preview Image" id="previewImage" class="drop-zoon__preview-image" draggable="false">
+                            <input type="file" id="fileInput" class="drop-zoon__file-input" accept=".php,.txt,.js,.java,.py,.jar,.rb,.c,.cpp">
+                        </div>
+                        <!-- End Drop Zoon -->
+
+                        <!-- File Details -->
+                        <div id="fileDetails" class="upload-area__file-details file-details">
+                            <h3 class="file-details__title">Uploaded File</h3>
+
+                            <div id="uploadedFile" class="uploaded-file">
+                                <div class="uploaded-file__icon-container">
+                                    <i class='bx bxs-file-blank uploaded-file__icon'></i>
+                                    <span class="uploaded-file__icon-text"></span> <!-- Data Will be Comes From Js -->
+                                </div>
+
+                                <div id="uploadedFileInfo" class="uploaded-file__info">
+                                    <span class="uploaded-file__name">Proejct 1</span>
+                                    <span class="uploaded-file__counter">0%</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <button id="uploadButton" class="btn btn-primary">Gönder</button>
+
+                            </div>
+                        </div>
+                        <!-- End File Details -->
+                    </div>
+                    <div id="resultContainer" class="upload-area" style="animation: slidDown 500ms ease;">
+                        <div id="goalAi">
+                            <h4 class="text-danger">AI:</h4> <div class="result"></div>
+                        </div>
+                       
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        hljs.highlightAll();
-
-        $(document).ready(() => {
-            $('#send-button').on('click', sendMessage);
-            $('#chat-input').on('keypress', (e) => {
-                if (e.which === 13) sendMessage();
-            });
-        });
-
-        function sendMessage() {
-            const message = $('#chat-input').val().trim();
-            if (!message) return;
-            displayMessage("Sen", message, 'user');
-            $('#chat-input').val('');
-            getAIResponse(message);
-        }
-
-        function getAIResponse(userMessage) {
-            $('#loading-animation').show();
-            $.post('src/Ajax/hackathon/home/AiAjax.php', {
-                    message: userMessage
-                })
-                .done((data) => {
-                    const aiMessage = (typeof data === 'object' && data.message) ? data.message : data;
-                    displayMessage("Cafer", aiMessage, 'ai');
-                })
-                .fail((error) => console.error("Hata:", error))
-                .always(() => $('#loading-animation').hide());
-        }
-
-        function displayMessage(sender, message, messageType) {
-            $('#chat-messages').append(`<div class="chat-message ${messageType}"><strong>${sender}:</strong> ${convertMarkdown(message)}</div>`);
-            $('#chat-container').scrollTop($('#chat-container')[0].scrollHeight);
-            hljs.highlightAll();
-        }
-
-        function convertMarkdown(text) {
-            return text
-                .replace(/###### (.*?)\n/g, '<h6>$1</h6>')
-                .replace(/##### (.*?)\n/g, '<h5>$1</h5>')
-                .replace(/#### (.*?)\n/g, '<h4>$1</h4>')
-                .replace(/### (.*?)\n/g, '<h3>$1</h3>')
-                .replace(/## (.*?)\n/g, '<h2>$1</h2>')
-                .replace(/# (.*?)\n/g, '<h1>$1</h1>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>');
-        }
-    </script>
+    <script src="/public/themes/hackathon/home/assets/js/script.js"></script>
 </body>
 
 </html>
