@@ -45,6 +45,7 @@ class Helpers
         return $result;
     }
 
+
     public static function controllers()
     {
         $url = $_SERVER["DOCUMENT_ROOT"] . "/app/controllers/*.php";

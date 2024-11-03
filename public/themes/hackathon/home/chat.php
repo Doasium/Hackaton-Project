@@ -24,7 +24,21 @@
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo suscipit delectus esse in. Eveniet adipisci atque aperiam laboriosam architecto unde quaerat facere, libero temporibus corporis voluptate quod? Error, eius quod.
         </div>
     </div>
-    <?php include 'templates/sidebar.php'; ?>
+    <div class="container mt-5">
+        <div class="row">
+            <?php include 'templates/sidebar.php'; ?>
+
+            <div class="col-md-9">
+                <div class="chat-container" id="chat-container">
+                    <div id="chat-messages"></div>
+                </div>
+                <div class="chat-input d-flex">
+                    <input type="text" id="chat-input" name="message" class="form-control" placeholder="Mesaj yazın...">
+                    <button id="send-button" class="btn btn-primary">Gönder</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

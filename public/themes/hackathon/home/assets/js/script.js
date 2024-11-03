@@ -163,13 +163,17 @@ function fileValidate(fileType, fileSize) {
 
 $(document).ready(function () {
     $('#resultContainer').hide();
+    const url = window.location.pathname;
+
+    const urlParts = url.split('/');
+
+    const lessonId = urlParts[urlParts.length - 1];
+
 
     $('#uploadButton').click(function () {
         var fileInput = $('#fileInput')[0].files[0];
-        // Butonu disable et
         $('#loading-animation').show();
-
-        $(this).prop("disabled", true); // .button("disable") yerine prop() kullanıldı
+        $(this).prop("disabled", true); 
 
         if (fileInput) {
             var reader = new FileReader();
@@ -180,7 +184,8 @@ $(document).ready(function () {
                     url: '/src/Ajax/hackathon/home/AiAjax.php',
                     type: 'POST',
                     data: {
-                        fileContent: fileContent
+                        fileContent: fileContent,
+                        idContent: lessonId
                     },
                     success: function (response) {
                         $('#resultContainer').show();

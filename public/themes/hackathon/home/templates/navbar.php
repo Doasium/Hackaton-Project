@@ -8,8 +8,19 @@
             <ul class="navbar-nav ml-auto align-items-center">
                 <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="/chat">ChatBot</a></li>
+                <li class="nav-item"><a class="nav-link" href="/quests">Sorular</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
-                <li class="nav-item"><a class="nav-link" href="login"><span class="material-icons-outlined">account_circle</span></a></li>
+                <?php
+
+                use App\Controllers\UserController;
+                use App\Models\UserModel;
+
+                if ((new UserController())->getLogged()) { ?>
+                    <li class="nav-item"><a class="nav-link" href="/logout"><span style="font-weight: bold;"><?= (new UserController())->getUserFullName(); ?></span></a></li>
+                <?php } else { ?>
+                    <li class="nav-item"><a class="nav-link" href="/login"><span class="material-icons-outlined">account_circle</span></a></li>
+
+                <?php } ?>
             </ul>
         </div>
     </nav>

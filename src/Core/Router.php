@@ -15,7 +15,7 @@ class Router
     public function __construct()
     {
         $this->routes = [];
-        $this->maintenanceMode = false; // Initialize maintenance mode
+        $this->maintenanceMode = false; // Bakım modunu başlat
     }
 
     public function enableMaintenanceMode()
@@ -43,7 +43,7 @@ class Router
                 'jsFile' => $jsFile,
                 'authRequired' => $authRequired,
                 'maintenance' => $maintenance,
-                'params' => [], // Params defined here
+                'params' => [], // Burada parametreleri tanımlıyoruz
             ];
         }
     }
@@ -56,34 +56,33 @@ class Router
         if (isset($this->routes[$url])) {
             $route = $this->routes[$url];
 
-            // Check HTTP method
+            // HTTP metodunu kontrol et
             if ($route['method'] !== $method) {
                 header($_SERVER["SERVER_PROTOCOL"] . " 405 Method Not Allowed");
                 echo "405 Method Not Allowed";
                 return;
             }
 
-            // Check if user is logged in if auth is required
+            // Giriş gereksinimini kontrol et
             if ($route['authRequired'] && !$userController->getLogged()) {
                 header($_SERVER["SERVER_PROTOCOL"] . " 403 Forbidden");
                 require_once $_SERVER["DOCUMENT_ROOT"] . '/themes/errors/403.php';
                 return;
             }
 
-            // Check maintenance mode
+            // Bakım modunu kontrol et
             if ($this->maintenanceMode && $route['maintenance'] && !$userController->isAdmin()) {
                 header($_SERVER["SERVER_PROTOCOL"] . " 503 Service Unavailable");
                 require_once $_SERVER["DOCUMENT_ROOT"] . '/themes/errors/maintenance.php';
                 return;
             }
-            // Check and include JavaScript file
 
-            // Handle parameters and call the route handler
+            // JavaScript dosyasını kontrol et ve ekle
             $handler = $route['handler'];
             if (is_array($handler)) {
                 $controller = $handler[0];
                 $method = $handler[1];
-                $params = array_slice($route['params'], 0); // Get parameters
+                $params = array_slice($route['params'], 0); // Parametreleri al
                 call_user_func_array([$controller, $method], $params);
             } else {
                 call_user_func($handler);
@@ -118,18 +117,18 @@ class Router
         foreach ($this->routes as $route => $routeData) {
             $pattern = str_replace('/', '\/', $route);
             $pattern = preg_replace('/\{(\w+)\}/', '([^\/]+)', $pattern);
-            $pattern = '/^' . $pattern . '\/?$/';
+            $pattern = '/^' . $pattern . '\/?$/' ;
 
             if (preg_match($pattern, $requestUrl, $matches) && $routeData['method'] === $method) {
                 $matchedRoute = $route;
-                $params = array_slice($matches, 1); // Skip the first element, take the rest as parameters
-                $this->routes[$route]['params'] = $params; // Store params for later use
+                $params = array_slice($matches, 1); // İlk elemanı atla, geri kalanları parametre olarak al
+                $this->routes[$route]['params'] = $params; // Daha sonra kullanılmak üzere parametreleri sakla
                 break;
             }
         }
 
         if ($matchedRoute !== null) {
-            // CSRF validation for POST/PUT/DELETE methods
+            // CSRF doğrulaması
             if (in_array($method, ['POST', 'PUT', 'DELETE'])) {
                 $csrfToken = $_POST['csrf_token'] ?? '';
                 if (!Security::validateCsrfToken($csrfToken)) {
@@ -145,7 +144,7 @@ class Router
             require_once $_SERVER["DOCUMENT_ROOT"] . '/public/errors/404.php';
         }
 
-        // Clear CSRF token
+        // CSRF token'ı temizle
         // unset($_SESSION['csrf_token']);
     }
 }

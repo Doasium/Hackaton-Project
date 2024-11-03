@@ -2,6 +2,7 @@
 require_once $_SERVER["DOCUMENT_ROOT"] . '/src/Config/config.php';
 require_once AUTOLOAD_PATH;
 session_start();
+
 use App\Operation\AIOperation;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -10,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['message'])) {
         $response = $userModel->chatBot($_POST['message']);
     } elseif (isset($_POST['fileContent'])) {
-        $response = $userModel->codeAnaliz($_POST['fileContent']);
+        $response = $userModel->codeAnaliz($_POST['fileContent'],$_POST["idContent"]);
     }
 
     header('Content-Type: application/json');

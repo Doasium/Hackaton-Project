@@ -4,11 +4,13 @@ namespace App\Operation;
 
 use App\Api\Cache\Cache;
 use App\Controllers\UserController;
+use App\Models\LeassonModel;
 use App\Models\UserModel;
 use GeminiAPI\Client;
 use GeminiAPI\Enums\Role;
 use GeminiAPI\Resources\Content;
 use GeminiAPI\Resources\Parts\TextPart;
+use RuntimeException;
 
 class AIOperation
 {
@@ -48,32 +50,48 @@ class AIOperation
 
     public function sendMessage($message, $history, $chat)
     {
-        $response = $chat->withHistory($history)->sendMessage(new TextPart($message));
-
-        $history[] = Content::text($response->text(), Role::Model);
-
-        return $response->text();
+        try {
+            $response = $chat->withHistory($history)->sendMessage(new TextPart($message));
+            $history[] = Content::text($response->text(), Role::Model);
+            return $response->text() ?: "Bir hata oluştu.";
+        } catch (RuntimeException $e) {
+            if ($e->getCode() === 429) {
+                return $this->sendMessage($message, $history, $chat); // Yeniden dene
+            }
+            return "Bir hata oluştu biraz sonra tekrar deneyiniz.";
+        }
     }
 
-    public function codeAnaliz($code)
+    public function codeAnaliz($code, $quest_id)
     {
         $userController = new UserController();
-
+        $leassonModel = new LeassonModel();
         if ($userController->getLogged()) {
+            if ($quest = $leassonModel->getQuest($quest_id)) {
+                $client = new Client('AIzaSyDJwdS9G-dlzrtASyDnZpxRAAQXnlTM4Nc');
+                $chat = $client->geminiPro15()->startChat();
 
-            $client = new Client('AIzaSyDJwdS9G-dlzrtASyDnZpxRAAQXnlTM4Nc');
-            $chat = $client->geminiPro15()->startChat();
+                $goal = $quest["q_quest"];
+                $response = $chat->sendMessage(
+                    new TextPart("Aşağıdaki " . $quest["q_language"] . " kodunu analiz et ve başarı oranını % olarak belirt: \n\n" . $code . "\n kodun amacı şu:" . $goal . "\n çok kısa bir şekilde geri dönütler sağla sadece başarı oranı ve şunu yapsaydın daha iyi olabilirdi gibi. ve asla kod örneği verme. eğer ki çok düşük bir yüzdelik başarısı varsa yorum yapma sadece yüzdeliğini söyle. Eğer " . $code . " bu kod istenileni karşılamıyorsa yalnızca %lik olarak başarısını ver istenilen ise şu: " . $goal . "Biraz dostani cevaplar ver emoji kullan eğer başardıysa sevinçli bir şekilde cevap ver. Kodun sonucu " . $goal . " la aynı olması gerekli yüzdeliği buna göre ver bir birinden farklı bir kod verdiğimde saçma bir yüzdelik verme.")
+                );
 
-            $goal = "Sadece ekrana 1 kere ahmet yazdırması gerekli.";
-            $response = $chat->sendMessage(
-                new TextPart("Aşağıdaki PHP kodunu analiz et ve başarı oranını % olarak belirt: \n\n" . $code . "\n kodun amacı şu:" . $goal . "\n çok kısa bir şekilde geri dönütler sağla sadece başarı oranı ve şunu yapsaydın daha iyi olabilirdi gibi. ve asla kod örneği verme. eğer ki çok düşük bir yüzdelik başarısı varsa yorum yapma sadece yüzdeliğini söyle. Eğer " . $code . " bu kod istenileni karşılamıyorsa yalnızca %lik olarak başarısını ver istenilen ise şu: " . $goal . "Biraz dostani cevaplar ver emoji kullan eğer başardıysa sevinçli bir şekilde cevap ver.")
-            );
+                $analysisResult = $response->text();
 
-            $analysisResult = $response->text();
-
-            return [
-                'analysis' => $analysisResult,
-            ];
+                if ($analysisResult) {
+                    return [
+                        'analysis' => $analysisResult,
+                    ];
+                } else {
+                    return [
+                        'analysis' => "Bir hata oluştu tekrardan deneyiniz."
+                    ];
+                }
+            } else {
+                return [
+                    'analysis' => "Böyle bir soru yok"
+                ];
+            }
         } else {
             return ['analysis' => 'Giriş yapmanız gerekli.'];
         }

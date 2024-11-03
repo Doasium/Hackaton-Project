@@ -17,7 +17,10 @@ if (App::globalMaintenanceMode) {
 
 $router->addRoute(['/', "/anasayfa"], [$homeController, 'index'], null, false, false);
 $router->addRoute(["/chat"], [$homeController, 'chat'], null, false, false);
-$router->addRoute(["/code/analize"], [$homeController, 'code_analize'], null, false, false);
 $router->addRoute(["/login"], [$homeController, "login"], "home/js/login");
 $router->addRoute(["/register"], [$homeController, "register"]);
 $router->addRoute(["/logout"], [$homeController, "logout"]);
+$router->addRoute(["/quests"], [$homeController, "quests"]);
+$router->addRoute(["/leasson/watch/{leasson_id}"], [$homeController, "leasson_view"]);
+$router->addRoute(["/leasson/quest/{quest_id}"], [$homeController, "quest_view"]);
+
