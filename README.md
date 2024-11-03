@@ -4,7 +4,7 @@ Doasium ekibi olarak geliştirdiğimiz **Shark Edu**, kullanıcıların her alan
 
 ## Özellikler
 
-- **Eğitim İçeriği**: Kullanıcılar yazılım dilleri üzerine hazırlanan eğitim içeriklerini inceleyebilir, öğrenme sürecini hızlandırabilir.
+- **Eğitim İçeriği**: Kullanıcılar eğitim içeriklerini inceleyebilir, öğrenme sürecini hızlandırabilir.
 - **Chatbot Desteği**: Chatbot ile etkileşime geçerek anlık sorulara yanıt bulabilir ve kişisel destek alabilirler.
 - **Kod Analizi**: Kullanıcılar, üzerinde çalıştıkları kodları dosya olarak yükleyerek, yapay zekâdan doğruluk analizi alabilirler. Yüklenen dosya, Gemini tarafından analiz edilerek verilen soruya göre yazılan kodun doğruluğu yüzde olarak belirtilir.
 
