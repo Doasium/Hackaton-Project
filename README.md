@@ -1,6 +1,6 @@
 # Shark Edu
 
-Doasium ekibi olarak geliştirdiğimiz **Shark Edu**, kullanıcıların yazılım dillerinde eğitim alabilmeleri, öğrendiklerini pratik edebilmeleri ve takıldıkları noktalarda destek alabilmeleri için tasarlanmıştır. Shark Edu, yapay zeka olarak **Gemini**'yi kullanarak çeşitli eğitim olanakları sunarken, kullanıcıların kodlama becerilerini değerlendirmelerine yardımcı olur.
+Doasium ekibi olarak geliştirdiğimiz **Shark Edu**, kullanıcıların her alanda eğitim alabilmeleri, öğrendiklerini pratik edebilmeleri ve takıldıkları noktalarda destek alabilmeleri için tasarlanmıştır. Shark Edu, yapay zeka olarak **Gemini**'yi kullanarak çeşitli eğitim olanakları sunarken, kullanıcıların kodlama becerilerini değerlendirmelerine yardımcı olur.
 
 ## Özellikler
 
