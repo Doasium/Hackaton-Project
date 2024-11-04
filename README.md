@@ -12,5 +12,5 @@ Doasium ekibi olarak geliştirdiğimiz **Shark Edu**, kullanıcıların her alan
 
 - **Gemini**: Eğitim içerikleri, kod analizleri ve chatbot entegrasyonu için kullanılmıştır.
 
-## Pojemizin Detaylarının Açıklanması (Video)
+## Pojemizin Detaylarının Açıklayan (Video)
 https://www.youtube.com/watch?v=eoWHHnBL2N0
